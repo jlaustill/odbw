@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../opcm"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.tpp": "cpp"
+		}
+	}
+}
