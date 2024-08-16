@@ -1,0 +1,8 @@
+## Hardware
+
+Enclosure AIPXE-325X4B
+Header ATM13-12PA-12PB-BM03
+Plug A ATM06-12SA
+Plug B ATM06-12SB
+Socket AT62-201-20141
+Wedge AWM-12S

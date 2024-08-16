@@ -5,7 +5,7 @@
 Adafruit_MCP4725 dac;
 
 int minAppsOffIdle = 1000;
-int maxApps = 0;
+int maxApps = 800;
 int appsValue = 0;
 int isIdling = 0;
 int appsThrottlePercentage = 0;
@@ -16,13 +16,17 @@ int relayPin = 5;
 int dacp3 = 0;
 int dac3p8 = 0;
 int dacOutput = 0;
+bool result = false;
 
 void setup() {
+  Serial.begin(9600);
   pinMode(idlePin, INPUT_PULLUP);
   pinMode(relayPin, OUTPUT);
-  dac.begin(0x60);
+  result = dac.begin(0x62);
+  Serial.println("DAC Result: " + (String)result);
 
   dacp3 = map(.3, 0, 5, 0, 4095);
+  dacOutput = dacp3;
   dac3p8 = map(3.8, 0, 5, 0, 4095);
 }
 
@@ -38,7 +42,7 @@ void loop() {
     maxApps = appsValue;
   }
 
-  appsThrottlePercentage = map(appsValue, 157, 815, 0, 100);
+  appsThrottlePercentage = map(appsValue, minAppsOffIdle, maxApps - 5, 0, 100);
 
   appsThrottlePercentage =
       appsThrottlePercentage < 0 ? 0 : appsThrottlePercentage;
@@ -48,14 +52,15 @@ void loop() {
   if (isIdling) {
     appsThrottlePercentage = 0;
     digitalWrite(relayPin, LOW);
-    dac.setVoltage(dacp3, false);
+    result = dac.setVoltage(dacp3, false);
   } else {
     digitalWrite(relayPin, HIGH);
     dacOutput = map(appsThrottlePercentage, 0, 100, dacp3, dac3p8);
-    dac.setVoltage(dacOutput, false);
+    result = dac.setVoltage(dacOutput, false);
   }
-  
+    // Serial.println("DAC: " + (String)dacOutput + " Result: " + (String)result);
+
   Serial.println("APPS MIN: " + (String)minAppsOffIdle +
                  " MAX: " + (String)maxApps + " Throttle Percentage: " +
-                 (String)appsThrottlePercentage + " Idle: " + (String)isIdling);
+                 (String)appsThrottlePercentage + " Idle: " + (String)isIdling + " DAC: " + (String)dacOutput);
 }
